@@ -25,8 +25,8 @@ function [foregroundrn, cc,cr,radius,flag]=extract_object(input_image,image_temp
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   % Subtracting background.  
   % MISSING CODE HERE
-  %foreground = zeros(rows,columns);
-  %foreground = 
+  foreground = zeros(rows,columns);
+  foreground = abs(rgb2gray(input_image/255) - rgb2gray(image_template/255))*255 > th;
   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
   
 
