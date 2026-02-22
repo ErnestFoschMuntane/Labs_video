@@ -35,14 +35,14 @@ function [foregroundrn, cc,cr,radius,flag]=extract_object(input_image,image_temp
   foregroundrn = bwmorph(foreground,'erode',2);
   
   figure(40)
-  imshow(foreground)
+  imshow(foreground) % Plot of background substraction with noise
   figure(41)
-  imshow(foregroundrn)
+  imshow(foregroundrn) % bg substraction without noise
   hold on
 
   % -----------------------------------------------------------------------
   % Tracking Module. Selecting the largest object
-  labeled = bwlabel(foregroundrn,4);
+  labeled = bwlabel(foregroundrn,4); % https://es.mathworks.com/help/images/ref/bwlabel.html
   stats = regionprops(labeled,['basic']);
   [N,W] = size(stats);
   if N < 1

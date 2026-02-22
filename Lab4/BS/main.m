@@ -24,20 +24,20 @@ addpath data
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MISSING CODE HERE
 % Loading frames
-image_template = double(imread('imagen0000.png'));
+image_template = double(imread('imagen0000.png')); % background only frame
 % Fixing a threshold
 th=10;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Showing the image template
 figure(1)
-imshow(image_template/255)
+imshow(image_template/255) % If type = double then 0-1
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Video Segmentation
-for i = 1:10 %%%%%%%%%%%%%%%%%%%%%% MISSING CODE HERE
+for i = 1:10 %%%%%%%%%%%%%%%%%%%%%% MISSING CODE HERE (11 frames but 1st one is the reference)
     
   % Loading image
   input_image=imread(sprintf('imagen00%02d.png',i));
