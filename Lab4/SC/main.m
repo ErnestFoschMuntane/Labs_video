@@ -44,7 +44,7 @@ noise=max(max(abs(A-mean(reshape(A,dim_data*n_space*cluster_size,1)))));
 
 
 % Potentially, including noisy observations
-corruption = 0.0; % <------  Consider values in the range [0, 0.18]
+corruption = 0.00; % <------  Consider values in the range [0, 0.18]
 N = randn(size(A)) * corruption * noise;
 X = A + N;
 X = normalize(X);
@@ -53,7 +53,7 @@ X = normalize(X);
 % Solving optimization problem
 lambda_1 = 0.099; % Weight coefficient to impose sparsity in affinities
 lambda_2 = 0.001; % Weight coefficient to enforce temporal consistency
-filter = 1; % <-------   Impose order for temporal filtering [1, 2, 4]
+filter = 4; % <-------   Impose order for temporal filtering [1, 2, 4]
 Z = osc_relaxed(X, lambda_1, lambda_2, filter);
 
 % Observing the affinity matrix

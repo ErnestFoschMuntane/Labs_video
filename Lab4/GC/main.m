@@ -22,15 +22,18 @@ addpath data
 
 
 % Loading and showing input data
-%input_image = imread('peppers.png');
+% input_image = imread('peppers.png');
 input_image = imread('baby.jpg');
+
+% Show input image:
 figure(1);
 imshow(input_image);
 
 % Computing superpixels for graph (nodes and edges) initialization instead
 % of pixel based approach.
-L = superpixels(input_image,500);
-%BW = boundarymask(L); imshow(imoverlay(input_image,BW,'cyan'),'InitialMagnification',67);
+L = superpixels(input_image,500); % 500 superpixels
+figure(2);
+BW = boundarymask(L); imshow(imoverlay(input_image,BW,'cyan'),'InitialMagnification',67);
 
 % Fixing samples within the foreground region by means of rectangular
 % box/es. Creating the corresponding mask
@@ -45,22 +48,24 @@ foreground = createMask(f,input_image);
 disp('Selecting background area...');
 [a]=ginput(2);
 b1 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','r');
-[a]=ginput(2);
-b2 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','r');
-% If several, mix them
-background = createMask(b1,input_image) + createMask(b2,input_image);
- 
+% [a]=ginput(2);
+% b2 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','r');
+% % If several, mix them
+% background = createMask(b1,input_image) + createMask(b2,input_image);
+
+background = createMask(b1,input_image); % Only one bg bounding box
+
 disp('Observing input user interaction...');
 
 % Applying lazysnapping algorithm, a graph cut based algorithm
 BW = lazysnapping(input_image,L,foreground,background);
 
 % Observing the foreground region
-figure(2)
+figure(3)
 imshow(labeloverlay(input_image,BW,'Colormap',[0 1 0]))
 
 % Extracting foreground region
 maskedImage = input_image;
 maskedImage(repmat(~BW,[1 1 3])) = 0;
-figure(3)
+figure(4)
 imshow(maskedImage)
