@@ -44,52 +44,66 @@ noise=max(max(abs(A-mean(reshape(A,dim_data*n_space*cluster_size,1)))));
 
 
 % Potentially, including noisy observations
-corruption = 0.00; % <------  Consider values in the range [0, 0.18]
-N = randn(size(A)) * corruption * noise;
-X = A + N;
-X = normalize(X);
-%--------------------------------------------------------------------------
+corruption = 0 : 0.02 : 0.18; % <------  Consider values in the range [0, 0.18]. This are 10 different values
+error_hist = zeros(1,length(corruption)); % histogram of error for different corruption values.
 
-% Solving optimization problem
-lambda_1 = 0.099; % Weight coefficient to impose sparsity in affinities
-lambda_2 = 0.001; % Weight coefficient to enforce temporal consistency
-filter = 4; % <-------   Impose order for temporal filtering [1, 2, 4]
-Z = osc_relaxed(X, lambda_1, lambda_2, filter);
+for k=1:length(corruption)
 
-% Observing the affinity matrix
-figure(1)
-imagesc(abs(Z) + abs(Z'))
-xlabel('Frame number');
-ylabel('Frame number');
-
-% Split the video in clusters from affinity matrix Z
-clusters = ncutW(abs(Z) + abs(Z'), n_space);
-final_clusters = condense_clusters(clusters, 1);
-
-
-% Computing clustering error
-v = 1:n_space;
-P = perms(v)'; %5x120
-AA=kron(P,ones(cluster_size,1));
-int=0;
-for i=1:size(AA,2)
-    [a,b]=find(final_clusters==AA(:,i));
-    if (size(a,1)>int)
-        nlabels=size(a,1);
-        int=nlabels;
-        ground_clusters=AA(:,i);
+    N = randn(size(A)) * corruption(k) * noise;
+    X = A + N;
+    X = normalize(X);
+    %--------------------------------------------------------------------------
+    
+    % Solving optimization problem
+    lambda_1 = 0.099; % Weight coefficient to impose sparsity in affinities
+    lambda_2 = 0.001; % Weight coefficient to enforce temporal consistency
+    filter = 4; % <-------   Impose order for temporal filtering [1, 2, 4]
+    Z = osc_relaxed(X, lambda_1, lambda_2, filter);
+    
+    % Observing the affinity matrix
+    figure(1)
+    imagesc(abs(Z) + abs(Z'))
+    xlabel('Frame number');
+    ylabel('Frame number');
+    
+    % Split the video in clusters from affinity matrix Z
+    clusters = ncutW(abs(Z) + abs(Z'), n_space);
+    final_clusters = condense_clusters(clusters, 1);
+    
+    
+    % Computing clustering error
+    v = 1:n_space;
+    P = perms(v)'; %5x120
+    AA=kron(P,ones(cluster_size,1));
+    int=0;
+    for i=1:size(AA,2)
+        [a,b]=find(final_clusters==AA(:,i));
+        if (size(a,1)>int)
+            nlabels=size(a,1);
+            int=nlabels;
+            ground_clusters=AA(:,i);
+        end
     end
+    disp('The error in % is')
+    error=(1-(nlabels/(n_space*cluster_size)))*100
+    
+    error_hist(k) = error; %store the error.
+    
+    % Observing the results
+    figure(2) 
+    subplot(121)
+    imagesc(final_clusters);
+    ylabel('Label for every frame');
+    title('Your estimation')
+    subplot(122)
+    imagesc(ground_clusters);
+    ylabel('Label for every frame');
+    title('Ground truth')
 end
-disp('The error in % is')
-error=(1-(nlabels/(n_space*cluster_size)))*100
 
-% Observing the results
-figure(2) 
-subplot(121)
-imagesc(final_clusters);
-ylabel('Label for every frame');
-title('Your estimation')
-subplot(122)
-imagesc(ground_clusters);
-ylabel('Label for every frame');
-title('Ground truth')
+figure(3)
+plot(corruption, error_hist, '-o','LineWidth',2)
+xlabel('Corruption level')
+ylabel('Clustering error (%)')
+title('Clustering Error vs Corruption Level')
+grid on
