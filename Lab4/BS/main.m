@@ -34,9 +34,10 @@ mean_frame = mean_frame / numFrames;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % MISSING CODE HERE
 % Loading frames
-% image_template = double(imread('imagen0000.png')); % background only frame (for the 1st part)
-% numFrames = 11;
+image_template = double(imread('imagen0000.png')); % background only frame (for the 1st part)
+numFrames = 11;
 
+%% "Improvements / Testings":
 % Option 1: We consider the first frame as the reference frame
 % image_template = double(frames(:,:,:,1)); % wrong detection if reference frame is the 1st one
 
@@ -47,7 +48,7 @@ mean_frame = mean_frame / numFrames;
 % image_template = mean_frame;
 
 % Fixing a threshold
-th=10;
+th=30;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Showing the image template (for the 1st part)
@@ -59,13 +60,13 @@ th=10;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Video Segmentation
 for i = 2:numFrames %%%%%%%%%%%%%%%%%%%%%% MISSING CODE HERE
-
+% Loop starts at 2 because we don't want to do background substraction to the reference frame.
   % Loading image
-  % input_image=imread(sprintf('imagen00%02d.png',i-1));
-  input_image=frames(:,:,:,i);
+  input_image=imread(sprintf('imagen00%02d.png',i-1));
+  % input_image=frames(:,:,:,i);
   input_imagew = double(input_image);
 
-  image_template = double(frames(:,:,:,i-1));
+  % image_template = double(frames(:,:,:,i-1)); % change the reference frame as the previous frame.
 
   %Extracting foreground
   [foreground,cc(i),cr(i),radius,flag]=extract_object(input_imagew,image_template,th);

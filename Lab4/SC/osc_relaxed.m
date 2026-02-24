@@ -44,32 +44,19 @@ elseif (filter==2)
     R = (triu(ones(xn, xn-1),2) - triu(ones(xn, xn-1),1)) + M + (triu(ones(xn, xn-1))-triu(ones(xn, xn-1),-1));
     R = sparse(R);
 elseif (filter==4)   
-    % M1 = 16*(triu(ones(xn,xn-1),1) - triu(ones(xn,xn-1),2));
-    % M1(1,2) = 1;
-    % M2 = 16*(triu(ones(xn,xn-1),-1) - triu(ones(xn,xn-1)));
-    % M2(2,1) = 1;
-    % M2(xn,xn-1)=0;
-    % M3 = -30*eye(xn,xn-1);
-    % M3(1,1) = 0;
-    % M3(2,2) = -16;
-    % R = (triu(ones(xn,xn-1),3)-triu(ones(xn,xn-1),2)) + (triu(ones(xn,xn-1),-1)-triu(ones(xn,xn-1),-2)) + M1 + M2 + M3;
-    % R(xn,xn-3) = -1;
-    % R(xn,xn-2) = 1;
-    % R(xn,xn-1) = 0
-    % R = sparse(R);
-
-    % 4th-order finite difference filter:
-    % [1  -4  6  -4  1]
-
-    e = ones(xn,1);
-
-    R = spdiags([e -4*e 6*e -4*e e], 0:4, xn, xn+4);
-
-    % Keep only valid columns (xn-4 differences)
-    R = R(:,1:xn-1);
-
+    M1 = 16*(triu(ones(xn,xn-1),1) - triu(ones(xn,xn-1),2));
+    M1(1,2) = 1;
+    M2 = 16*(triu(ones(xn,xn-1),-1) - triu(ones(xn,xn-1)));
+    M2(2,1) = 1;
+    M2(xn,xn-1)=0;
+    M3 = -30*eye(xn,xn-1);
+    M3(1,1) = 0;
+    M3(2,2) = -16;
+    R = (triu(ones(xn,xn-1),3)-triu(ones(xn,xn-1),2)) + (triu(ones(xn,xn-1),-1)-triu(ones(xn,xn-1),-2)) + M1 + M2 + M3;
+    R(xn,xn-3) = -1;
+    R(xn,xn-2) = 1;
+    R(xn,xn-1) = 0;
     R = sparse(R);
-    
 else
     error('The provided filter order is not correct');
 end

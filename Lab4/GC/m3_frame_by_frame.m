@@ -10,6 +10,7 @@ gt = zeros(480, 854, numFrames, 'logical'); % array to store the ground truth
 error = zeros(1, numFrames); % array to store the error of the segmentation
 
 %figure(1);
+% Get all the frames:
 for i=1:numFrames
     % frames(:,:,:,i) = im2double(imread(sprintf('camel_000%02d.jpg',i-1)));
     % gt(:,:,i) = imread(sprintf('camel_000%02d.png',i-1));
@@ -19,6 +20,7 @@ for i=1:numFrames
     %pause;
 end
 
+% Input Image is the 1st frame:
 input_image = frames(:,:,:,1);
 
 % Computing superpixels for graph (nodes and edges) initialization instead
@@ -31,9 +33,13 @@ BW = boundarymask(L); imshow(imoverlay(input_image,BW,'cyan'),'InitialMagnificat
 % box/es. Creating the corresponding mask
 disp('Selecting foreground area...');
 [a]=ginput(2);
-f = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','g');
+f1 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','g');
+[a]=ginput(2);
+f2 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','g');
+[a]=ginput(2);
+f3 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','g');
 % If several, mix them
-foreground = createMask(f,input_image);
+foreground = createMask(f1,input_image) + createMask(f2,input_image) + createMask(f3,input_image);
 
 % Fixing samples within the background region by means of rectangular
 % box/es. Creating the corresponding mask
@@ -42,13 +48,16 @@ disp('Selecting background area...');
 b1 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','r');
 [a]=ginput(2);
 b2 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','r');
+[a]=ginput(2);
+b3 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','r');
 % If several, mix them
-background = createMask(b1,input_image) + createMask(b2,input_image);
+background = createMask(b1,input_image) + createMask(b2,input_image) + createMask(b3,input_image);
 
 disp('Observing input user interaction...');
 
 for i=1:numFrames
     % Applying lazysnapping algorithm, a graph cut based algorithm
+    L = superpixels(frames(:,:,:,i),500);
     BW = lazysnapping(frames(:,:,:,i),L,foreground,background);
     % Observing the foreground region
     figure(3);
@@ -65,7 +74,7 @@ for i=1:numFrames
     
     intersection = sum(gt(:,:,i) & BW(:,:), 'all'); % which pixels hava a correct label
     total_fg = sum(gt(:,:,i), 'all'); % how many pixels belong to the segmentation 
-    error(i) = 1-(intersection / total_fg);
+    error(i) = 1-(intersection / total_fg); % 1-accuracy
 end
 
 mean_error = sum(error)/numFrames;

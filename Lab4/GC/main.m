@@ -48,12 +48,12 @@ foreground = createMask(f,input_image);
 disp('Selecting background area...');
 [a]=ginput(2);
 b1 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','r');
-% [a]=ginput(2);
-% b2 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','r');
-% % If several, mix them
-% background = createMask(b1,input_image) + createMask(b2,input_image);
+[a]=ginput(2);
+b2 = drawrectangle(gca,'Position',[a(1,1) a(1,2) a(2,1)-a(1,1) a(2,2)-a(1,2)],'Color','r');
+% If several, mix them
+background = createMask(b1,input_image) + createMask(b2,input_image);
 
-background = createMask(b1,input_image); % Only one bg bounding box
+% background = createMask(b1,input_image); % Only one bg bounding box
 
 disp('Observing input user interaction...');
 

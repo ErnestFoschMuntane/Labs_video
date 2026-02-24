@@ -61,7 +61,7 @@ for k=1:length(corruption)
     Z = osc_relaxed(X, lambda_1, lambda_2, filter);
     
     % Observing the affinity matrix
-    figure(1)
+    figure
     imagesc(abs(Z) + abs(Z'))
     xlabel('Frame number');
     ylabel('Frame number');
@@ -90,7 +90,7 @@ for k=1:length(corruption)
     error_hist(k) = error; %store the error.
     
     % Observing the results
-    figure(2) 
+    figure
     subplot(121)
     imagesc(final_clusters);
     ylabel('Label for every frame');
